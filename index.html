@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>FIP Chromecast Weergave</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: black;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+  }
+  h2 {
+    font-size: 2rem;
+    margin: 10px 0 0 0;
+    text-align: center;
+  }
+  h3 {
+    font-size: 1.5rem;
+    font-weight: normal;
+    color: #ff80aa;
+    margin: 5px 0 15px 0;
+    text-align: center;
+  }
+  img {
+    max-width: 60%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.7);
+  }
+</style>
+</head>
+<body>
+  <h1>🎵 FIP</h1>
+  <h2 id="title">Laden...</h2>
+  <h3 id="artist"></h3>
+  <img id="cover" src="" alt="Albumcover">
+  
+  <script>
+    async function updateFIP() {
+      try {
+        const res = await fetch("https://fip-metadata.fly.dev/api/metadata/fip");
+        const data = await res.json();
+
+        const current = data.now?.title || "Onbekend nummer";
+        const artist = data.now?.artist || "Onbekende artiest";
+        const cover = data.now?.cover || "";
+
+        document.getElementById("title").textContent = current;
+        document.getElementById("artist").textContent = artist;
+        document.getElementById("cover").src = cover;
+      } catch (err) {
+        console.error("Fout bij laden FIP metadata", err);
+      }
+    }
+
+    updateFIP();
+    setInterval(updateFIP, 10000);
+
+    // Zet de pagina automatisch fullscreen als dat kan
+    document.addEventListener("click", () => {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
